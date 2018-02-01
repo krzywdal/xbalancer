@@ -1,0 +1,46 @@
+group 'com.zitt.xbalancer'
+version '1.0-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+// Use Java 8 by default
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+project.ext {
+    dropwizardVersion = '1.2.0'
+    configPath = "$rootProject.projectDir/config/"
+}
+
+version = '1.0'
+
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+    compile 'tw.hyl.common:jersey-jodatime:1.0.0'
+    compile 'io.dropwizard.modules:dropwizard-java8:0.9.0-1'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '1.3.0-rc1'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testCompile 'org.apache.httpcomponents:httpclient:4.5.3'
+}
+
+mainClassName = "com.zitt.xbalancer.XbalancerApplication"
+
+run {
+    args 'server', configPath + 'app.yml'
+}

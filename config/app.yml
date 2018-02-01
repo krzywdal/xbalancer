@@ -1,0 +1,14 @@
+appName: TEST_APP
+
+appHosts:
+  - http://host1.com
+  - http://host2.com
+  - http://host3.com
+  - http://host4.com
+
+appBalancingMode: KEY_HASH
+
+keysForRoute:
+  - a
+  - b
+  - c
