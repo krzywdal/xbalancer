@@ -12,6 +12,7 @@ public class XbalancerAppEnvironment {
     private List<String> appHosts;
     private List<String> keysForRoute;
     private BalancingMode mode;
+    private Boolean isLoadBalanced;
 
     /**
      * @param appName
@@ -25,6 +26,7 @@ public class XbalancerAppEnvironment {
         this.appHosts = appHosts;
         this.mode = mode;
         this.keysForRoute = new ArrayList<>();
+        this.isLoadBalanced = false;
     }
 
     /**
@@ -32,15 +34,18 @@ public class XbalancerAppEnvironment {
      * @param appHosts
      * @param keysForRoute
      * @param mode
+     * @param isLoadBalanced
      */
     public XbalancerAppEnvironment(String appName,
                                    List<String> appHosts,
                                    List<String> keysForRoute,
-                                   BalancingMode mode) {
+                                   BalancingMode mode,
+                                   Boolean isLoadBalanced) {
         this.appName = appName;
         this.appHosts = appHosts;
-        this.mode = mode;
         this.keysForRoute = keysForRoute;
+        this.mode = mode;
+        this.isLoadBalanced = isLoadBalanced;
     }
 
     public String getAppName() {
@@ -75,6 +80,14 @@ public class XbalancerAppEnvironment {
         this.mode = mode;
     }
 
+    public Boolean getLoadBalanced() {
+        return isLoadBalanced;
+    }
+
+    public void setLoadBalanced(Boolean loadBalanced) {
+        isLoadBalanced = loadBalanced;
+    }
+
     @Override
     public String toString() {
         return "XbalancerAppEnvironment{" +
@@ -82,6 +95,7 @@ public class XbalancerAppEnvironment {
                 ", appHosts=" + appHosts +
                 ", keysForRoute=" + keysForRoute +
                 ", mode=" + mode +
+                ", isLoadBalanced=" + isLoadBalanced +
                 '}';
     }
 }
