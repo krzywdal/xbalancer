@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Created by zitt on 4/16/17.
+ * Created by lkrzywda on 4/16/17.
  */
 public class XbalancerConfiguration extends Configuration {
 
@@ -21,6 +22,9 @@ public class XbalancerConfiguration extends Configuration {
     private String appBalancingMode;
 
     private List<String> keysForRoute;
+
+    @NotNull
+    private Boolean isLoadBalanced;
 
     @JsonProperty
     public String getAppName() {
@@ -52,12 +56,24 @@ public class XbalancerConfiguration extends Configuration {
         this.appBalancingMode = appBalancingMode;
     }
 
+    @JsonProperty
     public List<String> getKeysForRoute() {
         return keysForRoute;
     }
 
+    @JsonProperty
     public void setKeysForRoute(List<String> keysForRoute) {
         this.keysForRoute = keysForRoute;
+    }
+
+    @JsonProperty
+    public Boolean getIsLoadBalanced() {
+        return isLoadBalanced;
+    }
+
+    @JsonProperty
+    public void setIsLoadBalanced(Boolean isLoadBalanced) {
+        this.isLoadBalanced = isLoadBalanced;
     }
 
     @Override
@@ -65,8 +81,9 @@ public class XbalancerConfiguration extends Configuration {
         return "XbalancerConfiguration{" +
                 "appName='" + appName + '\'' +
                 ", appHosts=" + appHosts +
-                ", appBalancingMode=" + appBalancingMode +
+                ", appBalancingMode='" + appBalancingMode + '\'' +
                 ", keysForRoute=" + keysForRoute +
+                ", isLoadBalanced='" + isLoadBalanced + '\'' +
                 '}';
     }
 }

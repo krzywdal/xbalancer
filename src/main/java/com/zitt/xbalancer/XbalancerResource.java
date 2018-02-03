@@ -27,16 +27,18 @@ import java.util.concurrent.atomic.AtomicLong;
 @Produces(MediaType.APPLICATION_JSON)
 public class XbalancerResource {
 
+    public final static String STATUS_ENDPOINT = "/balancer_status";
+
     private final static Logger LOG = Logger.getLogger(XbalancerResource.class);
     private final static String SUBRESOURCES_REGEX_ENDPOINT = "{subResources:.*}";
     private final static String X_FORWARDED_FOR = "X-FORWARDED-FOR";
     private final static String UTF_8 = "UTF-8";
-    public final static String STATUS_ENDPOINT = "/balancer_status";
 
     private final String appName;
     private AtomicLong counter;
     private HashMap<String, XbalancerAppEnvironment> appMap;
     private boolean isLoadBalanced;
+
 
     /**
      * @param conf
@@ -46,13 +48,14 @@ public class XbalancerResource {
         this.appName = conf.getAppName();
         this.appMap = new HashMap<>();
         this.counter = new AtomicLong(0);
-        this.isLoadBalanced = false;
+        this.isLoadBalanced = conf.getIsLoadBalanced();
 
         this.appMap.put(conf.getAppName(),
                 new XbalancerAppEnvironment(conf.getAppName(),
                         conf.getAppHosts(),
                         conf.getKeysForRoute(),
-                        BalancingMode.getByName(conf.getAppBalancingMode())
+                        BalancingMode
+                                .getByName(conf.getAppBalancingMode())
                                 .orElse(BalancingMode.ROUND_ROBIN)));
     }
 
@@ -65,7 +68,7 @@ public class XbalancerResource {
         if (url.equals(STATUS_ENDPOINT)) {
             return Response.ok(new AppStatus(AppStatus.UP)).build();
         }
-        
+
         String fullUrl = selectRoute(request) + url;
         LOG.info("balance get: " + fullUrl);
         URI uri = new URI(fullUrl);

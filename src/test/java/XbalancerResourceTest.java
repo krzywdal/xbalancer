@@ -38,6 +38,7 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
         config.setKeysForRoute(KEYS);
         config.setAppHosts(HOSTS);
         config.setAppName(APP_NAME);
+        config.setIsLoadBalanced(false);
         return new XbalancerResource(config);
     }
 

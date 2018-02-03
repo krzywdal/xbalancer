@@ -6,9 +6,16 @@ appHosts:
   - http://host3.com
   - http://host4.com
 
+#
+# Available modes are:
+# ROUND_ROBIN, RANDOM, KEY_HASH, IP_HASH
+#
 appBalancingMode: KEY_HASH
 
 keysForRoute:
   - a
   - b
   - c
+
+# set it to true is xbalancer is behind the load balancer
+isLoadBalanced: false
