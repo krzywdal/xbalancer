@@ -37,7 +37,6 @@ public class XbalancerResource {
     private final String appName;
     private AtomicLong counter;
     private HashMap<String, XbalancerAppEnvironment> appMap;
-    private boolean isLoadBalanced;
 
 
     /**
@@ -48,7 +47,6 @@ public class XbalancerResource {
         this.appName = conf.getAppName();
         this.appMap = new HashMap<>();
         this.counter = new AtomicLong(0);
-        this.isLoadBalanced = conf.getIsLoadBalanced();
 
         this.appMap.put(conf.getAppName(),
                 new XbalancerAppEnvironment(conf.getAppName(),
@@ -56,7 +54,9 @@ public class XbalancerResource {
                         conf.getKeysForRoute(),
                         BalancingMode
                                 .getByName(conf.getAppBalancingMode())
-                                .orElse(BalancingMode.ROUND_ROBIN)));
+                                .orElse(BalancingMode.ROUND_ROBIN),
+                        conf.getIsLoadBalanced()));
+
     }
 
     @GET
@@ -80,6 +80,7 @@ public class XbalancerResource {
      * @param request
      * @return
      */
+
     public String selectRoute(HttpServletRequest request) {
 
         XbalancerAppEnvironment env = appMap.get(appName);
@@ -97,7 +98,7 @@ public class XbalancerResource {
             // TODO - implement
         } else if (mode.equals(BalancingMode.IP_HASH)) {
             // IP HASH
-            int index = getIndexFromIp(request, env, isLoadBalanced);
+            int index = getIndexFromIp(request, env);
             return env.getAppHosts().get(index);
         } else if (mode.equals(BalancingMode.KEY_HASH)) {
             // KEY HASH
@@ -128,14 +129,12 @@ public class XbalancerResource {
     /**
      * @param request
      * @param env
-     * @param isLoadBalanced
      * @return
      */
     private static int getIndexFromIp(HttpServletRequest request,
-                                      XbalancerAppEnvironment env,
-                                      boolean isLoadBalanced) {
+                                      XbalancerAppEnvironment env) {
         int hash = 0;
-        if (isLoadBalanced) {
+        if (env.getLoadBalanced()) {
             hash = Objects.hashCode(request.getHeader(X_FORWARDED_FOR));
         } else {
             hash = Objects.hashCode(request.getRemoteAddr());
