@@ -26,6 +26,7 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
     private static final List<String> KEYS = Arrays.asList("a", "b");
     private static final String APP_NAME = "TEST_APP";
     private static final String TARGET_URL = "http://test.com?";
+    private static final String EXPECTED_STATUS_JSON = "{\"status\":\"UP\"}";
 
 
     /**
@@ -38,6 +39,12 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
         config.setAppHosts(HOSTS);
         config.setAppName(APP_NAME);
         return new XbalancerResource(config);
+    }
+
+    @Test
+    public void testStatusEndpoint() throws Exception {
+        String entity = get(XbalancerResource.STATUS_ENDPOINT);
+        assertEquals(EXPECTED_STATUS_JSON, entity);
     }
 
     @Test
@@ -164,7 +171,7 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
         routes.add(res.selectRoute(req));
         routes.add(res.selectRoute(req));
 
-        assertTrue(routes.size() > 1);
+        assertTrue(routes.size() > 1 && routes.size() <= 5);
 
     }
 

@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -32,6 +31,7 @@ public class XbalancerResource {
     private final static String SUBRESOURCES_REGEX_ENDPOINT = "{subResources:.*}";
     private final static String X_FORWARDED_FOR = "X-FORWARDED-FOR";
     private final static String UTF_8 = "UTF-8";
+    public final static String STATUS_ENDPOINT = "/balancer_status";
 
     private final String appName;
     private AtomicLong counter;
@@ -60,9 +60,15 @@ public class XbalancerResource {
     @Path(SUBRESOURCES_REGEX_ENDPOINT)
     @Timed
     public Response balanceGet(@Context HttpServletRequest request) throws IOException, URISyntaxException {
-        String url = selectRoute(request) + getFullURL(request);
-        LOG.info("balance get: " + url);
-        URI uri = new URI(url);
+        String url = getUrl(request);
+
+        if (url.equals(STATUS_ENDPOINT)) {
+            return Response.ok(new AppStatus(AppStatus.UP)).build();
+        }
+        
+        String fullUrl = selectRoute(request) + url;
+        LOG.info("balance get: " + fullUrl);
+        URI uri = new URI(fullUrl);
         return Response.seeOther(uri).build();
     }
 
@@ -134,7 +140,12 @@ public class XbalancerResource {
         return Math.abs(hash) % env.getAppHosts().size();
     }
 
-    public static String getFullURL(HttpServletRequest request) {
+
+    /**
+     * @param request
+     * @return
+     */
+    public static String getUrl(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         String queryString = request.getQueryString();
         if (queryString == null) {
