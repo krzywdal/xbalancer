@@ -1,5 +1,11 @@
+#
+# application name
+#
 appName: TEST_APP
 
+#
+# All hosts for this application
+#
 appHosts:
   - http://host1.com
   - http://host2.com
@@ -7,11 +13,15 @@ appHosts:
   - http://host4.com
 
 #
-# Available modes are:
+# Available balancing modes are:
 # ROUND_ROBIN, RANDOM, KEY_HASH, IP_HASH
 #
 appBalancingMode: KEY_HASH
 
+#
+# If balancing mode is KEY_HASH define your key
+# otherwise set to an empty table
+#
 keysForRoute:
   - a
   - b
