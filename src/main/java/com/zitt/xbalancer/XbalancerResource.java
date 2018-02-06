@@ -4,10 +4,13 @@ import com.codahale.metrics.annotation.Timed;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -18,6 +21,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -32,6 +36,7 @@ public class XbalancerResource {
     private final static Logger LOG = Logger.getLogger(XbalancerResource.class);
     private final static String SUBRESOURCES_REGEX_ENDPOINT = "{subResources:.*}";
     private final static String X_FORWARDED_FOR = "X-FORWARDED-FOR";
+    private final static String XBALANCER_COOKIE = "XBALANCER_COOKIE";
     private final static String UTF_8 = "UTF-8";
 
     private final String appName;
@@ -62,14 +67,17 @@ public class XbalancerResource {
     @GET
     @Path(SUBRESOURCES_REGEX_ENDPOINT)
     @Timed
-    public Response balanceGet(@Context HttpServletRequest request) throws IOException, URISyntaxException {
+    public Response balanceGet(@Context HttpServletRequest request,
+                               @Context HttpServletResponse response,
+                               @CookieParam(XBALANCER_COOKIE) Cookie cookie) throws IOException, URISyntaxException {
         String url = getUrl(request);
 
+        // handle status request
         if (url.equals(STATUS_ENDPOINT)) {
             return Response.ok(new AppStatus(AppStatus.UP)).build();
         }
 
-        String fullUrl = selectRoute(request) + url;
+        String fullUrl = selectRoute(request, response, cookie) + url;
         LOG.info("balance get: " + fullUrl);
         URI uri = new URI(fullUrl);
         return Response.seeOther(uri).build();
@@ -81,33 +89,31 @@ public class XbalancerResource {
      * @return
      */
 
-    public String selectRoute(HttpServletRequest request) {
+    public String selectRoute(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
 
         XbalancerAppEnvironment env = appMap.get(appName);
-        int availableAppHosts = env.getAppHosts().size();
         BalancingMode mode = env.getMode();
+        int availableAppHosts = env.getAppHosts().size();
+        int index = 0;
 
         if (mode.equals(BalancingMode.ROUND_ROBIN)) {
             //ROUND ROBIN
-            return env.getAppHosts().get((int) (counter.getAndIncrement() % availableAppHosts));
+            index = (int) (counter.getAndIncrement() % availableAppHosts);
         } else if (mode.equals(BalancingMode.RANDOM)) {
             // RANDOM
-            return env.getAppHosts().get((int) (Math.random() * availableAppHosts));
+            index = (int) (Math.random() * availableAppHosts);
         } else if (mode.equals(BalancingMode.STICKY)) {
             // STICKY
-            // TODO - implement
+            index = getIndexFromCookie(cookie, env, response);
         } else if (mode.equals(BalancingMode.IP_HASH)) {
             // IP HASH
-            int index = getIndexFromIp(request, env);
-            return env.getAppHosts().get(index);
+            index = getIndexFromIp(request, env);
         } else if (mode.equals(BalancingMode.KEY_HASH)) {
             // KEY HASH
-            int index = getIndexFromKeyHash(getParamsMap(request), env);
-            return env.getAppHosts().get(index);
+            index = getIndexFromKeyHash(getParamsMap(request), env);
         }
 
-        // default
-        return env.getAppHosts().get(0);
+        return env.getAppHosts().get(index);
 
     }
 
@@ -142,6 +148,29 @@ public class XbalancerResource {
         return Math.abs(hash) % env.getAppHosts().size();
     }
 
+
+    /**
+     * @param cookie
+     * @param env
+     * @param response
+     * @return
+     */
+    private static int getIndexFromCookie(Cookie cookie,
+                                          XbalancerAppEnvironment env,
+                                          HttpServletResponse response) {
+        String cookieVal = "";
+        if (cookie == null) {
+            cookieVal = UUID.randomUUID().toString();
+            cookie = new Cookie(XBALANCER_COOKIE, cookieVal);
+            javax.servlet.http.Cookie c = new javax.servlet.http.Cookie(cookie.getName(), cookieVal);
+            c.setMaxAge(3600);
+            c.setPath("/");
+            response.addCookie(c);
+        } else {
+            cookieVal = cookie.getValue();
+        }
+        return Math.abs(Objects.hashCode(cookieVal)) % env.getAppHosts().size();
+    }
 
     /**
      * @param request

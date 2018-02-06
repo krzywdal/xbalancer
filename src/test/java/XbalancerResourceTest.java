@@ -138,10 +138,10 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
         Mockito.when(req.getQueryString()).thenReturn("a=0");
-        String host1 = res.selectRoute(req);
+        String host1 = res.selectRoute(req, null, null);
 
         Mockito.when(req.getQueryString()).thenReturn("a=0&b=1");
-        String host2 = res.selectRoute(req);
+        String host2 = res.selectRoute(req, null, null);
 
         assertNotEquals(host1, host2);
     }
@@ -151,12 +151,12 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
         XbalancerResource res = getResource(BalancingMode.ROUND_ROBIN);
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
-        assertEquals(HOSTS.get(0), res.selectRoute(req));
-        assertEquals(HOSTS.get(1), res.selectRoute(req));
-        assertEquals(HOSTS.get(2), res.selectRoute(req));
-        assertEquals(HOSTS.get(0), res.selectRoute(req));
-        assertEquals(HOSTS.get(1), res.selectRoute(req));
-        assertEquals(HOSTS.get(2), res.selectRoute(req));
+        assertEquals(HOSTS.get(0), res.selectRoute(req, null, null));
+        assertEquals(HOSTS.get(1), res.selectRoute(req, null, null));
+        assertEquals(HOSTS.get(2), res.selectRoute(req, null, null));
+        assertEquals(HOSTS.get(0), res.selectRoute(req, null, null));
+        assertEquals(HOSTS.get(1), res.selectRoute(req, null, null));
+        assertEquals(HOSTS.get(2), res.selectRoute(req, null, null));
     }
 
     @Test
@@ -166,11 +166,11 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
 
         Set<String> routes = new HashSet<>();
-        routes.add(res.selectRoute(req));
-        routes.add(res.selectRoute(req));
-        routes.add(res.selectRoute(req));
-        routes.add(res.selectRoute(req));
-        routes.add(res.selectRoute(req));
+        routes.add(res.selectRoute(req, null, null));
+        routes.add(res.selectRoute(req, null, null));
+        routes.add(res.selectRoute(req, null, null));
+        routes.add(res.selectRoute(req, null, null));
+        routes.add(res.selectRoute(req, null, null));
 
         assertTrue(routes.size() > 1 && routes.size() <= 5);
 

@@ -14,9 +14,9 @@ appHosts:
 
 #
 # Available balancing modes are:
-# ROUND_ROBIN, RANDOM, KEY_HASH, IP_HASH
+# ROUND_ROBIN, RANDOM, KEY_HASH, IP_HASH, STICKY
 #
-appBalancingMode: KEY_HASH
+appBalancingMode: ROUND_ROBIN
 
 #
 # If balancing mode is KEY_HASH define your key
