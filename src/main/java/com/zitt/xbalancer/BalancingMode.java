@@ -3,6 +3,8 @@ package com.zitt.xbalancer;
 import java.util.Optional;
 
 /**
+ * Enum lists all supported balancing modes
+ * <p>
  * Created by lkrzywda on 4/16/17.
  */
 public enum BalancingMode {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Class represents an environment of a single app configuration
+ * <p>
  * Created by lkrzywda on 4/16/17.
  */
 public class XbalancerAppEnvironment {
