@@ -86,9 +86,10 @@ public class XbalancerResource {
 
     /**
      * @param request
+     * @param response
+     * @param cookie
      * @return
      */
-
     public String selectRoute(HttpServletRequest request, HttpServletResponse response, Cookie cookie) {
 
         XbalancerAppEnvironment env = appMap.get(appName);

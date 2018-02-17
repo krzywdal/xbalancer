@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Main application class
+ * <p>
  * Created by lkrzywda on 4/16/17.
  */
 public class XbalancerApplication extends Application<XbalancerConfiguration> {

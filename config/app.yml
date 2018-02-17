@@ -19,8 +19,8 @@ appHosts:
 appBalancingMode: ROUND_ROBIN
 
 #
-# If balancing mode is KEY_HASH define your key
-# otherwise set to an empty table
+# If balancing mode is KEY_HASH define your keys here
+# otherwise set to an empty array
 #
 keysForRoute:
   - a

@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
+ * Configuration of xbalancer application
+ * <p>
  * Created by lkrzywda on 4/16/17.
  */
 public class XbalancerConfiguration extends Configuration {
