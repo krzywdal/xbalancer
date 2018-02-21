@@ -1,5 +1,7 @@
+package com.zitt.xbalancer;
+
 import com.zitt.xbalancer.XbalancerApplication;
-import com.zitt.xbalancer.XbalancerConfiguration;
+import com.zitt.xbalancer.configuration.XbalancerConfiguration;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

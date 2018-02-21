@@ -1,4 +1,4 @@
-package com.zitt.xbalancer;
+package com.zitt.xbalancer.domain;
 
 import java.util.Optional;
 

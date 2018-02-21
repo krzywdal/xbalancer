@@ -1,6 +1,10 @@
-package com.zitt.xbalancer;
+package com.zitt.xbalancer.resource;
 
 import com.codahale.metrics.annotation.Timed;
+import com.zitt.xbalancer.configuration.XbalancerConfiguration;
+import com.zitt.xbalancer.domain.AppStatus;
+import com.zitt.xbalancer.domain.BalancingMode;
+import com.zitt.xbalancer.domain.XbalancerAppEnvironment;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
