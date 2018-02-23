@@ -1,4 +1,6 @@
-package com.zitt.xbalancer;
+package com.zitt.xbalancer.domain;
+
+import com.zitt.xbalancer.domain.BalancingMode;
 
 import java.util.ArrayList;
 import java.util.List;

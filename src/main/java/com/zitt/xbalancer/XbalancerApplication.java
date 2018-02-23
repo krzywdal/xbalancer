@@ -1,5 +1,7 @@
 package com.zitt.xbalancer;
 
+import com.zitt.xbalancer.configuration.XbalancerConfiguration;
+import com.zitt.xbalancer.resource.XbalancerResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;

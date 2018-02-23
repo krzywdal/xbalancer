@@ -1,4 +1,4 @@
-package com.zitt.xbalancer;
+package com.zitt.xbalancer.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;

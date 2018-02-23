@@ -1,6 +1,8 @@
-import com.zitt.xbalancer.BalancingMode;
-import com.zitt.xbalancer.XbalancerConfiguration;
-import com.zitt.xbalancer.XbalancerResource;
+package com.zitt.xbalancer.resource;
+
+import com.zitt.xbalancer.AbstractIntegrationTest;
+import com.zitt.xbalancer.domain.BalancingMode;
+import com.zitt.xbalancer.configuration.XbalancerConfiguration;
 import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.client.ClientProperties;
 import org.junit.Test;

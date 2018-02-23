@@ -1,4 +1,4 @@
-package com.zitt.xbalancer;
+package com.zitt.xbalancer.domain;
 
 /**
  * Created by lkrzywda on 2/3/18.
