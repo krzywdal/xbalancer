@@ -31,9 +31,6 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
     private static final String EXPECTED_STATUS_JSON = "{\"status\":\"UP\"}";
 
 
-    /**
-     * @return
-     */
     private static XbalancerResource getResource(BalancingMode balancingMode) {
         XbalancerConfiguration config = new XbalancerConfiguration();
         config.setAppBalancingMode(balancingMode.name());
