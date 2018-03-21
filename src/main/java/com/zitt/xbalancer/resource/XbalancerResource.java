@@ -116,6 +116,9 @@ public class XbalancerResource {
         } else if (mode.equals(BalancingMode.KEY_HASH)) {
             // KEY HASH
             index = getIndexFromKeyHash(getParamsMap(request), env);
+        } else if (mode.equals(BalancingMode.TIMESTAMP_HASH)) {
+            // TIMESTAMP HASH
+            index = getIndexFromTimestamp(env);
         }
 
         return env.getAppHosts().get(index);
@@ -175,6 +178,16 @@ public class XbalancerResource {
             cookieVal = cookie.getValue();
         }
         return Math.abs(Objects.hashCode(cookieVal)) % env.getAppHosts().size();
+    }
+
+
+    /**
+     * @param env
+     * @return
+     */
+    private static int getIndexFromTimestamp(XbalancerAppEnvironment env) {
+        int hash = Objects.hashCode(System.currentTimeMillis() / 1000);
+        return Math.abs(hash) % env.getAppHosts().size();
     }
 
     /**
