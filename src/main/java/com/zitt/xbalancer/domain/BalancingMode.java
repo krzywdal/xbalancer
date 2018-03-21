@@ -13,7 +13,8 @@ public enum BalancingMode {
     RANDOM("RANDOM"),
     STICKY("STICKY"),
     IP_HASH("IP_HASH"),
-    KEY_HASH("KEY_HASH");
+    KEY_HASH("KEY_HASH"),
+    TIMESTAMP_HASH("TIMESTAMP_HASH");
 
     private String name;
 

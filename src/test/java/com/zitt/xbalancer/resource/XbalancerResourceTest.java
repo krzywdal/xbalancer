@@ -178,4 +178,21 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
 
     }
 
+
+    @Test
+    public void testTimestampHash() throws Exception {
+
+        XbalancerResource res = getResource(BalancingMode.TIMESTAMP_HASH);
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+
+
+        String route1 = res.selectRoute(req, null, null);
+        // after 1 sec we should get different result
+        Thread.sleep(1000);
+        String route2 = res.selectRoute(req, null, null);
+
+        assertNotEquals(route1, route2);
+
+    }
+
 }
