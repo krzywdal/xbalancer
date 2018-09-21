@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -42,6 +43,7 @@ public class XbalancerResource {
     private final static String X_FORWARDED_FOR = "X-FORWARDED-FOR";
     private final static String XBALANCER_COOKIE = "XBALANCER_COOKIE";
     private final static String UTF_8 = "UTF-8";
+    private final static int MAX_COOKIE_AGE = (int) TimeUnit.HOURS.toSeconds(1); // 1 hour
 
     private final String appName;
     private AtomicLong counter;
@@ -166,12 +168,12 @@ public class XbalancerResource {
     private static int getIndexFromCookie(Cookie cookie,
                                           XbalancerAppEnvironment env,
                                           HttpServletResponse response) {
-        String cookieVal = "";
+        String cookieVal;
         if (cookie == null) {
             cookieVal = UUID.randomUUID().toString();
             cookie = new Cookie(XBALANCER_COOKIE, cookieVal);
             javax.servlet.http.Cookie c = new javax.servlet.http.Cookie(cookie.getName(), cookieVal);
-            c.setMaxAge(3600);
+            c.setMaxAge(MAX_COOKIE_AGE);
             c.setPath("/");
             response.addCookie(c);
         } else {
@@ -211,7 +213,7 @@ public class XbalancerResource {
     private Map<String, String> getParamsMap(HttpServletRequest request) {
         Map<String, String> map = new HashMap<>();
         if (request != null && request.getQueryString() != null) {
-            String query = null;
+            String query;
             try {
                 query = URLDecoder.decode(request.getQueryString(), UTF_8);
             } catch (UnsupportedEncodingException e) {
