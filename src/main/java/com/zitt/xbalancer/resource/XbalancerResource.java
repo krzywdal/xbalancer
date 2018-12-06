@@ -40,7 +40,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -67,6 +66,7 @@ public class XbalancerResource {
     private final static String XBALANCER_COOKIE = "XBALANCER_COOKIE";
     private final static String UTF_8 = "UTF-8";
     private final static int MAX_COOKIE_AGE = (int) TimeUnit.HOURS.toSeconds(1); // 1 hour
+    private final static int TIMESTAMP_DURATION_MILLIS = 1000;
 
     private final String appName;
     private AtomicLong counter;
@@ -80,7 +80,7 @@ public class XbalancerResource {
         LOG.info(conf);
         this.appName = conf.getAppName();
         this.appMap = new HashMap<>();
-        this.counter = new AtomicLong(0);
+        this.counter = new AtomicLong(-1); // -1 because round robin counter is preincremented
 
         this.appMap.put(conf.getAppName(),
                 new XbalancerAppEnvironment(conf.getAppName(),
@@ -98,7 +98,7 @@ public class XbalancerResource {
     @Timed
     public Response balanceGet(@Context HttpServletRequest request,
                                @Context HttpServletResponse response,
-                               @CookieParam(XBALANCER_COOKIE) Cookie cookie) throws IOException, URISyntaxException {
+                               @CookieParam(XBALANCER_COOKIE) Cookie cookie) throws URISyntaxException {
         String url = getUrl(request);
 
         // handle status request
@@ -128,7 +128,7 @@ public class XbalancerResource {
 
         if (mode.equals(BalancingMode.ROUND_ROBIN)) {
             //ROUND ROBIN
-            index = (int) (counter.getAndIncrement() % availableAppHosts);
+            index = (int) counter.updateAndGet(curVal -> (Long.MAX_VALUE == curVal) ? 0 : ++curVal) % availableAppHosts;
         } else if (mode.equals(BalancingMode.RANDOM)) {
             // RANDOM
             index = (int) (Math.random() * availableAppHosts);
@@ -211,7 +211,7 @@ public class XbalancerResource {
      * @return
      */
     private static int getIndexFromTimestamp(XbalancerAppEnvironment env) {
-        int hash = Objects.hashCode(System.currentTimeMillis() / 1000);
+        int hash = Objects.hashCode(System.currentTimeMillis() / TIMESTAMP_DURATION_MILLIS);
         return Math.abs(hash) % env.getAppHosts().size();
     }
 
@@ -223,7 +223,7 @@ public class XbalancerResource {
         String pathInfo = request.getPathInfo();
         String queryString = request.getQueryString();
         if (queryString == null) {
-            return pathInfo.toString();
+            return pathInfo;
         } else {
             return pathInfo + '?' + queryString;
         }
