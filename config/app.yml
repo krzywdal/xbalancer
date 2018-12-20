@@ -1,3 +1,21 @@
+#######################################################################
+## server config
+#######################################################################
+server:
+  adminMinThreads: 1
+  adminMaxThreads: 64
+  adminContextPath: /admin
+  applicationConnectors:
+  - type: http
+    port: 8080
+  adminConnectors:
+  - type: http
+    port: 8081
+
+#######################################################################
+# application config
+#######################################################################
+
 #
 # application name
 #
