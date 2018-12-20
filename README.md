@@ -7,3 +7,7 @@ External Load Balancer supporting the following modes:
 * IP_HASH
 * KEY_HASH
 * TIMESTAMP_HASH
+
+
+Healthcheck exposed under:
+http://localhost:8081/healthcheck?pretty=true
