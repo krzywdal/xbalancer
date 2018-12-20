@@ -24,6 +24,7 @@
 package com.zitt.xbalancer;
 
 import com.zitt.xbalancer.configuration.XbalancerConfiguration;
+import com.zitt.xbalancer.resource.XbalancerHealthCheck;
 import com.zitt.xbalancer.resource.XbalancerResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -68,7 +69,9 @@ public class XbalancerApplication extends Application<XbalancerConfiguration> {
 
         final XbalancerResource resource = new XbalancerResource(configuration);
 
+        environment.healthChecks().register(APP_NAME, new XbalancerHealthCheck());
         environment.jersey().register(resource);
+
     }
 
 }

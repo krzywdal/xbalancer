@@ -20,7 +20,7 @@ appBalancingMode: ROUND_ROBIN
 
 #
 # If balancing mode is KEY_HASH define your keys here
-# otherwise set to an empty array
+# otherwise set to an empty array []
 #
 keysForRoute:
   - a
