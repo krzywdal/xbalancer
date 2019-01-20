@@ -9,5 +9,8 @@ External Load Balancer supporting the following modes:
 * TIMESTAMP_HASH
 
 
+Admin metrics exposed under:
+http://localhost:8081/admin/
+
 Healthcheck exposed under:
 http://localhost:8081/healthcheck?pretty=true
