@@ -1,7 +1,7 @@
 /**
  * MIT License
  * <p>
- * Copyright (c) 2018 Lukasz Krzywda
+ * Copyright (c) 2018-2019 Lukasz Krzywda
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,10 @@ public enum BalancingMode {
     STICKY("STICKY"),
     IP_HASH("IP_HASH"),
     KEY_HASH("KEY_HASH"),
-    TIMESTAMP_HASH("TIMESTAMP_HASH");
+    TIMESTAMP_HASH("TIMESTAMP_HASH"),
+    LEAST_CONNECTIONS("LEAST_CONNECTIONS"), // NOT EXTERNAL
+    WEIGHTED_LEAST_CONNECTIONS("WEIGHTED_LEAST_CONNECTIONS"); // NOT EXTERNAL
+
 
     private String name;
 
