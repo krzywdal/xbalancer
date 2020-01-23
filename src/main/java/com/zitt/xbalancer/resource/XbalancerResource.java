@@ -1,7 +1,7 @@
 /**
  * MIT License
  * <p>
- * Copyright (c) 2018-2019 Lukasz Krzywda
+ * Copyright (c) 2018-2020 Lukasz Krzywda
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -94,8 +94,8 @@ public class XbalancerResource {
     }
 
     @GET
-    @Path(SUBRESOURCES_REGEX_ENDPOINT)
     @Timed
+    @Path(SUBRESOURCES_REGEX_ENDPOINT)
     public Response balanceGet(@Context HttpServletRequest request,
                                @Context HttpServletResponse response,
                                @CookieParam(XBALANCER_COOKIE) Cookie cookie) throws URISyntaxException {
@@ -144,6 +144,14 @@ public class XbalancerResource {
         } else if (mode.equals(BalancingMode.TIMESTAMP_HASH)) {
             // TIMESTAMP HASH
             index = getIndexFromTimestamp(env);
+        } else if (mode.equals(BalancingMode.LEAST_CONNECTIONS)) {
+            // LEAST_CONNECTIONS
+            index = 0;
+            // TODO - implement me
+        } else if (mode.equals(BalancingMode.WEIGHTED_LEAST_CONNECTIONS)) {
+            // WEIGHTED_LEAST_CONNECTIONS
+            index = 0;
+            // TODO - implement me
         }
 
         return env.getAppHosts().get(index);
