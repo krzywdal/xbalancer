@@ -69,9 +69,9 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
                 .request()
                 .get();
 
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r1.getStatus());
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r2.getStatus());
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r3.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r1.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r2.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r3.getStatus());
 
     }
 
@@ -97,9 +97,9 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
                 .request()
                 .get();
 
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r1.getStatus());
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r2.getStatus());
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r3.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r1.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r2.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r3.getStatus());
 
     }
 
@@ -126,9 +126,9 @@ public class XbalancerResourceTest extends AbstractIntegrationTest {
                 .request()
                 .get();
 
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r1.getStatus());
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r2.getStatus());
-        assertEquals(HttpStatus.MOVED_TEMPORARILY_302, r3.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r1.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r2.getStatus());
+        assertEquals(HttpStatus.MOVED_PERMANENTLY_301, r3.getStatus());
     }
 
     @Test
