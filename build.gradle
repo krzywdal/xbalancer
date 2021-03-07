@@ -1,8 +1,8 @@
 group 'com.zitt.xbalancer'
 version '1.0-SNAPSHOT'
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+wrapper {
+    gradleVersion = '6.3'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
