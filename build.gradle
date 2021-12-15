@@ -28,14 +28,14 @@ repositories {
 
 dependencies {
 
-    compile group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
-    compile 'tw.hyl.common:jersey-jodatime:1.0.0'
-    compile 'io.dropwizard.modules:dropwizard-java8:0.9.0-1'
+    implementation group: 'io.dropwizard', name: 'dropwizard-core', version: dropwizardVersion
+    implementation 'tw.hyl.common:jersey-jodatime:1.0.0'
+    implementation 'io.dropwizard.modules:dropwizard-java8:0.9.0-1'
 
-    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: dropwizardVersion
-    testCompile group: 'junit', name: 'junit', version: '4.13'
-    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
-    testCompile 'org.apache.httpcomponents:httpclient:4.5.3'
+    testImplementation group: 'io.dropwizard', name: 'dropwizard-testing', version: dropwizardVersion
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+    testImplementation 'org.apache.httpcomponents:httpclient:4.5.3'
 }
 
 mainClassName = "com.zitt.xbalancer.XbalancerApplication"
