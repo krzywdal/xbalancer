@@ -74,9 +74,9 @@ public class XbalancerResource {
     private final String appName;
     private AtomicLong counter;
     private HashMap<String, XbalancerAppEnvironment> appMap;
-    private List<Integer> weightsConfig;
-    private int lastWeightIndex;
-    private int[] weightsCounter;
+    private static List<Integer> weightsConfig;
+    private static int lastWeightIndex;
+    private static int[] weightsCounter;
 
 
     /**
@@ -170,41 +170,10 @@ public class XbalancerResource {
             // TODO - implement me
         } else if (mode.equals(BalancingMode.WEIGHTED)) {
             // WEIGHTED
-            index = 0;
-
-            // initialize weights again if it does not contain positive weights
-            if (!containsPositiveWeights(weightsCounter)) {
-                final int[] i = {0};
-                this.weightsConfig.stream().forEach(k -> {
-                    weightsCounter[i[0]] = k;
-                    i[0]++;
-                });
-            } else {
-                lastWeightIndex++;
-                // reset index if we reached an end
-                if (lastWeightIndex >= weightsCounter.length) {
-                    lastWeightIndex = 0;
-                }
-                // keep increasing until we reach weight > 0
-                while (weightsCounter[lastWeightIndex] <= 0) {
-
-                    if (lastWeightIndex < weightsCounter.length - 1) {
-                        lastWeightIndex++;
-                    }
-                    if (lastWeightIndex > weightsCounter.length) {
-                        lastWeightIndex = 0;
-                    }
-                }
-                index = lastWeightIndex;
-                // decrease counter value by 1
-                synchronized (SEMAPHORE) {
-                    weightsCounter[lastWeightIndex]--;
-                }
-            }
+            index = getIndexFromWeights();
         }
 
         return env.getAppHosts().get(index);
-
     }
 
 
@@ -270,6 +239,43 @@ public class XbalancerResource {
     private static int getIndexFromTimestamp(XbalancerAppEnvironment env) {
         int hash = Objects.hashCode(System.currentTimeMillis() / TIMESTAMP_DURATION_MILLIS);
         return Math.abs(hash) % env.getAppHosts().size();
+    }
+
+    /**
+     * @return
+     */
+    private static int getIndexFromWeights() {
+        int index = 0;
+        // initialize weights again if it does not contain positive weights
+        if (!containsPositiveWeights(weightsCounter)) {
+            final int[] i = {0};
+            weightsConfig.stream().forEach(k -> {
+                weightsCounter[i[0]] = k;
+                i[0]++;
+            });
+        } else {
+            lastWeightIndex++;
+            // reset index if we reached an end
+            if (lastWeightIndex >= weightsCounter.length) {
+                lastWeightIndex = 0;
+            }
+            // keep increasing until we reach weight > 0
+            while (weightsCounter[lastWeightIndex] <= 0) {
+
+                if (lastWeightIndex < weightsCounter.length - 1) {
+                    lastWeightIndex++;
+                }
+                if (lastWeightIndex > weightsCounter.length) {
+                    lastWeightIndex = 0;
+                }
+            }
+            index = lastWeightIndex;
+            // decrease counter value by 1
+            synchronized (SEMAPHORE) {
+                weightsCounter[lastWeightIndex]--;
+            }
+        }
+        return index;
     }
 
     /**
