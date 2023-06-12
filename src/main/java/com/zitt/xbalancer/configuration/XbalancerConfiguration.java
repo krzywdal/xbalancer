@@ -48,6 +48,8 @@ public class XbalancerConfiguration extends Configuration {
 
     private List<String> keysForRoute;
 
+    private List<Integer> weights;
+
     @NotNull
     private Boolean isLoadBalanced;
 
@@ -92,6 +94,16 @@ public class XbalancerConfiguration extends Configuration {
     }
 
     @JsonProperty
+    public List<Integer> getWeights() {
+        return weights;
+    }
+
+    @JsonProperty
+    public void setWeights(List<Integer> weights) {
+        this.weights = weights;
+    }
+
+    @JsonProperty
     public Boolean getIsLoadBalanced() {
         return isLoadBalanced;
     }
@@ -108,7 +120,8 @@ public class XbalancerConfiguration extends Configuration {
                 ", appHosts=" + appHosts +
                 ", appBalancingMode='" + appBalancingMode + '\'' +
                 ", keysForRoute=" + keysForRoute +
-                ", isLoadBalanced='" + isLoadBalanced + '\'' +
+                ", weights=" + weights +
+                ", isLoadBalanced=" + isLoadBalanced +
                 '}';
     }
 }

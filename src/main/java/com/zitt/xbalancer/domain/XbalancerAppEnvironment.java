@@ -64,6 +64,7 @@ public class XbalancerAppEnvironment {
     public XbalancerAppEnvironment(String appName,
                                    List<String> appHosts,
                                    List<String> keysForRoute,
+                                   List<Integer> weights,
                                    BalancingMode mode,
                                    Boolean isLoadBalanced) {
         this.appName = appName;

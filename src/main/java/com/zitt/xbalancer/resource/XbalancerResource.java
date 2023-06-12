@@ -44,7 +44,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -67,10 +69,14 @@ public class XbalancerResource {
     private final static String UTF_8 = "UTF-8";
     private final static int MAX_COOKIE_AGE = (int) TimeUnit.HOURS.toSeconds(1); // 1 hour
     private final static int TIMESTAMP_DURATION_MILLIS = 1000;
+    private final static Object SEMAPHORE = new Object();
 
     private final String appName;
     private AtomicLong counter;
     private HashMap<String, XbalancerAppEnvironment> appMap;
+    private List<Integer> weightsConfig;
+    private int lastWeightIndex;
+    private int[] weightsCounter;
 
 
     /**
@@ -80,12 +86,22 @@ public class XbalancerResource {
         LOG.info(conf);
         this.appName = conf.getAppName();
         this.appMap = new HashMap<>();
-        this.counter = new AtomicLong(-1); // -1 because round robin counter is preincremented
+        this.counter = new AtomicLong(-1); // -1 because round-robin counter is pre-incremented
+        this.lastWeightIndex = -1; // -1 because is pre-incremented
+        this.weightsConfig = conf.getWeights();
+        this.weightsCounter = new int[weightsConfig.size()];
+
+        final int[] i = {0};
+        this.weightsConfig.stream().forEach(k -> {
+            weightsCounter[i[0]] = k;
+            i[0]++;
+        });
 
         this.appMap.put(conf.getAppName(),
                 new XbalancerAppEnvironment(conf.getAppName(),
                         conf.getAppHosts(),
                         conf.getKeysForRoute(),
+                        conf.getWeights(),
                         BalancingMode
                                 .getByName(conf.getAppBalancingMode())
                                 .orElse(BalancingMode.ROUND_ROBIN),
@@ -152,6 +168,39 @@ public class XbalancerResource {
             // WEIGHTED_LEAST_CONNECTIONS
             index = 0;
             // TODO - implement me
+        } else if (mode.equals(BalancingMode.WEIGHTED)) {
+            // WEIGHTED
+            index = 0;
+
+            // initialize weights again if it does not contain positive weights
+            if (!containsPositiveWeights(weightsCounter)) {
+                final int[] i = {0};
+                this.weightsConfig.stream().forEach(k -> {
+                    weightsCounter[i[0]] = k;
+                    i[0]++;
+                });
+            } else {
+                lastWeightIndex++;
+                // reset index if we reached an end
+                if (lastWeightIndex >= weightsCounter.length) {
+                    lastWeightIndex = 0;
+                }
+                // keep increasing until we reach weight > 0
+                while (weightsCounter[lastWeightIndex] <= 0) {
+
+                    if (lastWeightIndex < weightsCounter.length - 1) {
+                        lastWeightIndex++;
+                    }
+                    if (lastWeightIndex > weightsCounter.length) {
+                        lastWeightIndex = 0;
+                    }
+                }
+                index = lastWeightIndex;
+                // decrease counter value by 1
+                synchronized (SEMAPHORE) {
+                    weightsCounter[lastWeightIndex]--;
+                }
+            }
         }
 
         return env.getAppHosts().get(index);
@@ -221,6 +270,23 @@ public class XbalancerResource {
     private static int getIndexFromTimestamp(XbalancerAppEnvironment env) {
         int hash = Objects.hashCode(System.currentTimeMillis() / TIMESTAMP_DURATION_MILLIS);
         return Math.abs(hash) % env.getAppHosts().size();
+    }
+
+    /**
+     * @param weightsCounter
+     * @return
+     */
+    private static boolean containsPositiveWeights(int[] weightsCounter) {
+        LOG.info("containsPositiveWeights for: " + Arrays.toString(weightsCounter));
+
+        for (int i = 0; i < weightsCounter.length; i++) {
+            if (weightsCounter[i] > 0) {
+                LOG.info("containsPositiveWeights: " + true);
+                return true;
+            }
+        }
+        LOG.info("containsPositiveWeights: " + false);
+        return false;
     }
 
     /**

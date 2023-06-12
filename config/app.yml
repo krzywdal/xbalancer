@@ -63,19 +63,32 @@ appHosts:
 
 #
 # Available balancing modes are:
-# ROUND_ROBIN, RANDOM, KEY_HASH, IP_HASH, STICKY, TIMESTAMP_HASH
+# ROUND_ROBIN, RANDOM, KEY_HASH, IP_HASH, STICKY, TIMESTAMP_HASH, WEIGHTED
 #
-appBalancingMode: ROUND_ROBIN
+appBalancingMode: WEIGHTED
 
 #
 # If balancing mode is KEY_HASH define your keys here
 # otherwise set to an empty array []
+# Keys are parameter names from the http request. Their values will be used to
+# calculate the fingerprint which will be associated with the host.
 #
 keysForRoute:
   - a
   - b
   - c
 
+#
+# If balancing mode is WEIGHTED define your weights here
+# otherwise set to an empty array []
+# Their values are counted as 100% of traffic.
+# You can distribute your traffic among the hosts here (the same order as hosts)
+#
+weights:
+  - 2
+  - 4
+  - 1
+  - 3
+
 # set it to true is xbalancer is behind the load balancer
 isLoadBalanced: false
-
