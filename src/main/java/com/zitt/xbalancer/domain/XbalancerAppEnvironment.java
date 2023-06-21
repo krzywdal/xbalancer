@@ -1,7 +1,7 @@
 /**
  * MIT License
  * <p>
- * Copyright (c) 2018-2022 Lukasz Krzywda
+ * Copyright (c) 2018-2023 Lukasz Krzywda
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,6 +64,7 @@ public class XbalancerAppEnvironment {
     public XbalancerAppEnvironment(String appName,
                                    List<String> appHosts,
                                    List<String> keysForRoute,
+                                   List<Integer> weights,
                                    BalancingMode mode,
                                    Boolean isLoadBalanced) {
         this.appName = appName;
