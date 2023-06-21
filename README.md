@@ -1,7 +1,7 @@
 # xbalancer
 External Load Balancer supporting the following modes:
 
-* ROUND ROBIN
+* ROUND_ROBIN
 * RANDOM
 * STICKY
 * IP_HASH
