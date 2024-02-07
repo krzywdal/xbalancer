@@ -87,12 +87,12 @@ public class XbalancerResource {
         this.appName = conf.getAppName();
         this.appMap = new HashMap<>();
         this.counter = new AtomicLong(-1); // -1 because round-robin counter is pre-incremented
-        this.lastWeightIndex = -1; // -1 because is pre-incremented
-        this.weightsConfig = conf.getWeights();
-        this.weightsCounter = new int[weightsConfig.size()];
+        lastWeightIndex = -1; // -1 because is pre-incremented
+        weightsConfig = conf.getWeights();
+        weightsCounter = new int[weightsConfig.size()];
 
         final int[] i = {0};
-        this.weightsConfig.stream().forEach(k -> {
+        weightsConfig.forEach(k -> {
             weightsCounter[i[0]] = k;
             i[0]++;
         });
@@ -249,7 +249,7 @@ public class XbalancerResource {
         // initialize weights again if it does not contain positive weights
         if (!containsPositiveWeights(weightsCounter)) {
             final int[] i = {0};
-            weightsConfig.stream().forEach(k -> {
+            weightsConfig.forEach(k -> {
                 weightsCounter[i[0]] = k;
                 i[0]++;
             });
@@ -325,7 +325,7 @@ public class XbalancerResource {
             }
             String[] splits = query.split("&");
             for (String keyValParam : splits) {
-                String pair[] = keyValParam.split("=");
+                String[] pair = keyValParam.split("=");
                 if (pair.length == 2) {
                     map.put(pair[0], pair[1]);
                 } else {
